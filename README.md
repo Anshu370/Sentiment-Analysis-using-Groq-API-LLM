@@ -9,6 +9,7 @@ Welcome to the **Sentimental Detection Analysis** API! This project uses FastAPI
 - [API Endpoints](#api-endpoints)
 - [Usage](#usage)
 - [Project Structure](#project-structure)
+- [Approach](#approach)
 - [Contributing](#contributing)
 - [License](#license)
 
@@ -114,6 +115,28 @@ sentimental-detection-analysis/
 ├── requirements.txt  # List of dependencies
 ├── README.md         # This file
 ```
+
+## Approach
+
+The following approach was used in the **utility.py** module to handle file uploads and perform sentiment analysis:
+
+1. **File Handling:**
+   - The file is uploaded asynchronously using the `UploadFile` class in FastAPI.
+   - The file is read asynchronously using the `await` keyword to prevent blocking.
+   - The file content is read into an in-memory buffer using the `io.BytesIO` method.
+   - The buffer is then passed to `pandas.read_excel()` to load the Excel file into a DataFrame.
+
+2. **Sentiment Analysis:**
+   - For each review in the Excel file, the sentiment analysis function `sentiment_analysis_of_text()` is called.
+   - The function sends the text review to an external API (Groq), which processes the review and returns the sentiment scores in JSON format.
+   - The API response contains sentiment scores (positive, negative, neutral) and a confidence score.
+   - The sentiment scores are merged with the original review in the DataFrame and stored as a list of dictionaries.
+
+3. **CSV Conversion:**
+   - After processing all reviews, the list of sentiment results is converted to a pandas DataFrame.
+   - The DataFrame is written to a CSV file, which can be downloaded by the user.
+
+This approach ensures that the file processing is non-blocking, the sentiment analysis is integrated with an external API, and the output is easily accessible in CSV format.
 
 ## Contributing
 Contributions are welcome! Please feel free to open a Pull Request or submit issues.
